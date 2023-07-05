@@ -38,3 +38,10 @@
 **/.vscode/
 # custom config templates
 *_custom.tpl
+
+
+
+.terraformrc
+terraform.rc
+
+environments/test/cluster-keys.json
