@@ -7,6 +7,25 @@ resource "google_dns_managed_zone" "net_zone" {
   ]
 }
 
+# # resource "google_dns_record_set" "test_besu_record" {
+# #   name    = "test.besu.${var.dns_name}"
+# #   type    = "A"
+# #   ttl     = 300
+# #   managed_zone = google_dns_managed_zone.net_zone.name
+# #   rrdatas = [
+# #     google_compute_address.vault-ip.address
+# #   ]
+# # }
+
+# # resource "google_dns_record_set" "carrier_test_besu_record" {
+# #   name    = "carrier.test.besu.${var.dns_name}"
+# #   type    = "A"
+# #   ttl     = 300
+# #   managed_zone = google_dns_managed_zone.net_zone.name
+# #   rrdatas = [
+# #     google_compute_address.vault-ip.address
+# #   ]
+# # }
 
 # resource "google_dns_record_set" "ca_ord_record" {
 #   name    = "net-ord-ca.${var.dns_name}"
