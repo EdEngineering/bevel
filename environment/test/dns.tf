@@ -12,9 +12,7 @@ resource "google_dns_managed_zone" "net_zone" {
 # #   type    = "A"
 # #   ttl     = 300
 # #   managed_zone = google_dns_managed_zone.net_zone.name
-# #   rrdatas = [
-# #     google_compute_address.vault-ip.address
-# #   ]
+# #   rrdatas = ["35.223.248.9"]
 # # }
 
 # # resource "google_dns_record_set" "carrier_test_besu_record" {
@@ -22,9 +20,7 @@ resource "google_dns_managed_zone" "net_zone" {
 # #   type    = "A"
 # #   ttl     = 300
 # #   managed_zone = google_dns_managed_zone.net_zone.name
-# #   rrdatas = [
-# #     google_compute_address.vault-ip.address
-# #   ]
+# #   rrdatas = ["35.223.248.9"]
 # # }
 
 # resource "google_dns_record_set" "ca_ord_record" {
