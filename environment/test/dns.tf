@@ -23,14 +23,6 @@ resource "google_dns_record_set" "carrier_test_besu_record" {
   rrdatas = ["35.223.248.9"]
 }
 
-resource "google_dns_record_set" "vault_record" {
-  name    = "vault.${var.dns_name}"
-  type    = "A"
-  ttl     = 300
-  managed_zone = google_dns_managed_zone.net_zone.name
-  rrdatas = ["34.173.49.122"]
-}
-
 # resource "google_dns_record_set" "ca_ord_record" {
 #   name    = "net-ord-ca.${var.dns_name}"
 #   type    = "A"
