@@ -51,7 +51,7 @@ variable "dns_name" {
 
 variable "org_records" {
   type = set(string)
-  default = ["carrier", "store", "warehouse","manufacturer"]
+  default = ["supplychain","carrier", "store", "warehouse","manufacturer"]
 
 }
 
