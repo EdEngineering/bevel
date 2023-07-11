@@ -1,0 +1,96 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: warehousewarehousemember-node
+  namespace: warehouse-bes
+  annotations:
+    flux.weave.works/automated: "false"
+spec:
+  releaseName: warehousewarehousemember-node
+  interval: 1m
+  chart:
+   spec:
+    chart: platforms/hyperledger-besu/charts/node_besu
+    sourceRef:
+      kind: GitRepository
+      name: flux-dev
+      namespace: flux-dev
+  values:
+    metadata:
+      namespace: warehouse-bes
+      labels:
+    replicaCount: 1
+    staticnodes:
+      - "enode://f9a3eb25ae1592dde5f8b3b606e78dfdcbe239c1c265a1f73d5c96d8af290caefcc244d5b6f5e1fd41e2bf9bc9e078350879c5ca09495ecd734f3731916d8166@validator1.test.besu.evasquezapplaudo.ml:15010"
+      - "enode://3efb1ff8c24ae9d9df8a50c931cfa9c1704725cf51a923594bcab0ec7a4fe75cfc1a45dd9779a5e726812c29dbbefa1115e0f3e30799020e6cb9c2dde50ff6ce@validator2.test.besu.evasquezapplaudo.ml:15012"
+      - "enode://6eb7491ae26bfede75e114b11adda9244e9847c226c5905f3b52f274b0d35063f455967562a14eb5ac5ba6e940ff9be6e00f42b42c6a40332923570541a377c2@validator3.test.besu.evasquezapplaudo.ml:15014"
+      - "enode://6e1f3b1edab03a4fe4fbc91d50183c0ba37cac6eeeadd44760b8f6c1bedbe1daded65f201af7e428b05f7a81a6d6e6432d03295ae47770bd4394e7b34b5f67a1@validator4.test.besu.evasquezapplaudo.ml:15016"
+      - "enode://b633078f8d342a8585ad9b53a2224d9b56f35f600d11032fe0cb2883e0c114a67fb2edf53e032d29b44e35f903ef482935f9ea279f1dc11d761896fe4b191cf6@carrier.test.besu.evasquezapplaudo.ml:15020"
+      - "enode://9ce07091d1029cc4dea5e169e0f8f328d67d33620ebbd44d7179d69b8211bc17679d5466611bbcdc5e8e7c94fed0dfc2c6c464bde13b4dfafdce77a2d6538ee7@manufacturer.test.besu.evasquezapplaudo.ml:15030"
+      - "enode://a0279beeb437960c12c57be6fb73f21bdf655d0b21d91ef934a63dab32c3c991abb11041c5542646340d72f7edcc464b533be22c81e0c2d5be74789657ccdc2f@store.test.besu.evasquezapplaudo.ml:15040"
+      - "enode://f8fde57299a4384abd7858ddd618c9c835d66719d59cc1a62d6371052a309c7a8d11685269c73d31dac2cc369a4a93ce73bc2826b1375aef17297cd96dd96f62@warehouse.test.besu.evasquezapplaudo.ml:15050"
+
+    liveliness_check:
+      enabled: false
+    healthcheck:
+      readinessthreshold: 100
+      readinesscheckinterval: 5
+    proxy:
+      provider: ambassador
+      external_url: warehouse.test.besu.evasquezapplaudo.ml
+      p2p: 15050
+      rpc: 15051
+
+    images:
+      node: hyperledger/besu:22.10.2
+      alpineutils: ghcr.io/hyperledger/bevel-alpine:latest
+      pullPolicy: IfNotPresent
+
+    node:
+      name: warehouse
+      consensus: ibft
+      subject: O=Warehouse,OU=Warehouse,L=42.36/-71.06/Boston,C=US
+      mountPath: /opt/besu/data
+      servicetype: ClusterIP
+      imagePullSecret: regcred
+      ports:
+        p2p: 30303
+        rpc: 8545
+        ws: 8546
+
+      permissioning:
+        enabled: False
+
+    tm:
+      type: tessera
+      tls: True
+      url: "https://warehouse-tessera.warehouse-bes:8888"
+
+    privacy:
+      enabled: true
+      public_key_file: /secrets/tm_key.pub
+      tm_flag: true
+
+    storage:
+      storageclassname: gcpstorageclass
+      storagesize: 1Gi
+
+    vault:
+      address: http://34.173.49.122:8200
+      secretengine: secretsv2
+      secretprefix: data/warehouse-bes/crypto/warehouse
+      serviceaccountname: vault-auth
+      keyname: data
+      tmdir: tm
+      tlsdir: tls
+      role: vault-role
+      type: hashicorp
+      authpath: besuwarehouse
+
+    genesis: ewogICJjb25maWciOiB7CiAgICAiY2hhaW5JZCI6IDIwMTgsCiAgICAiY29uc3RhbnRpbm9wbGVmaXhibG9jayI6IDAsCiAgICAiY29udHJhY3RTaXplTGltaXQiOiAyMTQ3NDgzNjQ3LAogICAgImliZnQyIjogewogICAgICAiYmxvY2twZXJpb2RzZWNvbmRzIjogMiwKICAgICAgImVwb2NobGVuZ3RoIjogMzAwMDAsCiAgICAgICJyZXF1ZXN0dGltZW91dHNlY29uZHMiOiAxMAogICAgfQogIH0sCiAgIm5vbmNlIjogIjB4MCIsCiAgInRpbWVzdGFtcCI6ICIweDU4ZWU0MGJhIiwKICAiZ2FzTGltaXQiOiAiMHgxZmZmZmZmZmZmZmZmZiIsCiAgImRpZmZpY3VsdHkiOiAiMHgxIiwKICAiYWxsb2MiOiB7CiAgICAiNzVhMzUwNWNkNTBDZmM0MThlNTk0NThkMEUyM2M4YmQ5ZjZCNTJhMCI6IHsKICAgICAgImJhbGFuY2UiOiAiOTAwMDAwMDAwMDAwMDAwMDAwMDAwMDAiCiAgICB9LAogICAgImU2Njg1NTRjMjhlODE1MzVCODY3OWZmOWRlMTI4MjAzRmRlZGMyMTIiOiB7CiAgICAgICJiYWxhbmNlIjogIjkwMDAwMDAwMDAwMDAwMDAwMDAwMDAwIgogICAgfQogIH0sCiAgImV4dHJhRGF0YSI6ICIweGY4N2VhMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBmODU0OTRjNGU4NjEyMTJmNWJhYjkyMzNlYjVhNTAzMTAzNmY5NGJkMDA0ZGZlOTQ1MzhkYmJjMjk2YTU0MTMzOGFjOTQzZDcwMWVmNWYyM2U1YzU0MDc5OTQ1ZDIxODk5MjVkNzUyZDRiMTk5M2E0YWVhMTYwMTE5NDgyZTgxZTBhOTQ5NjEzZTBhYmFhZjFkOGIwOGRjYjE3MDNmODIxODRjMTA3OTNjMjUzODA4NDAwMDAwMDAwYzAiCn0=
+
+ 
+
+    metrics:
+      enabled: False
+      port: 9545
