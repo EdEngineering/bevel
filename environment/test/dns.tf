@@ -12,24 +12,26 @@ resource "google_dns_record_set" "test_besu_record" {
   type    = "A"
   ttl     = 300
   managed_zone = google_dns_managed_zone.net_zone.name
-  rrdatas = ["35.223.248.9"]
+  rrdatas = [var.besu_ambassador_ip_address]
 }
 
-# resource "google_dns_record_set" "carrier_test_besu_record" {
-#   name    = "carrier.test.besu.${var.dns_name}"
-#   type    = "A"
-#   ttl     = 300
-#   managed_zone = google_dns_managed_zone.net_zone.name
-#   rrdatas = ["35.223.248.9"]
-# }
 
-resource "google_dns_record_set" "ca_org_record" {
+resource "google_dns_record_set" "besu_org_record" {
   for_each = var.org_records
   name = "${each.value}.test.besu.${var.dns_name}"
   type    = "A"
   ttl     = 300
   managed_zone = google_dns_managed_zone.net_zone.name
-  rrdatas = ["35.223.248.9"]
+  rrdatas = [var.besu_ambassador_ip_address]
+}
+
+resource "google_dns_record_set" "besu_validators_record" {
+  count   = 5
+  name    = "validator${count.index}.test.besu.${var.dns_name}"
+  type    = "A"
+  ttl     = 300
+  managed_zone = google_dns_managed_zone.net_zone.name
+  rrdatas = [var.besu_ambassador_ip_address]
 }
 
 

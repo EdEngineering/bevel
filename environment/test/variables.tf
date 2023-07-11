@@ -55,6 +55,11 @@ variable "org_records" {
 
 }
 
+variable "besu_ambassador_ip_address" {
+  type = string
+  default = "35.223.248.9"
+}
+
 variable "kms_keyring" {
   type = string
   default = "vault-kms-keyring"
