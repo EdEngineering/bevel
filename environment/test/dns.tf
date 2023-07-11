@@ -34,6 +34,14 @@ resource "google_dns_record_set" "besu_validators_record" {
   rrdatas = [var.besu_ambassador_ip_address]
 }
 
+resource "google_dns_record_set" "besu_explorer_record" {
+  name    = "explorer.test.besu.${var.dns_name}"
+  type    = "A"
+  ttl     = 300
+  managed_zone = google_dns_managed_zone.net_zone.name
+  rrdatas = ["34.94.216.123"]
+}
+
 
 # resource "google_dns_record_set" "ca_ord_record" {
 #   name    = "net-ord-ca.${var.dns_name}"
