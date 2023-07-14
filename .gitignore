@@ -39,6 +39,8 @@
 # custom config templates
 *_custom.tpl
 
+### Sensitive Values ###
+**/ethsigner/*
 
 
 ### Terraform ###
