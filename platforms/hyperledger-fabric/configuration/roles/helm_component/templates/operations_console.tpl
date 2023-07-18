@@ -25,13 +25,17 @@ spec:
         configtxlator: hyperledger/fabric-tools:{{ network.version }}
     storage:
       couchdb:
-        storageclassname: {{ name }}sc
+        storageclassname: {{ sc_name }}
         storagesize: 512Mi
     service:
       name: {{ name }}console
       default_consortium: {{ default_consortium }}
       serviceaccountname: default
+{% if network.docker.username is defined and network.docker.password is defined %}
       imagesecretname: regcred
+{% else %}
+      imagesecretname: ""
+{% endif %}
       servicetype: ClusterIP
       ports:
         console:
