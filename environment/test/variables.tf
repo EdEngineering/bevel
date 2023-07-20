@@ -46,7 +46,7 @@ variable "node_count" {
 
 variable "dns_name" {
   type = string
-  default = "evasquezapplaudo.ml."
+  default = "edengineering.me."
 }
 
 variable "org_records" {
