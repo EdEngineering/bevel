@@ -11,7 +11,7 @@ variable "name" {
 variable "region" {
   type        = string
   description = "Infrastructure Region"
-  default     = "us-central1"
+  default     = "us-east1"
 }
 
 variable "zone" {
