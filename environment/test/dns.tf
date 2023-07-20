@@ -22,7 +22,7 @@ resource "google_dns_record_set" "besu_org_record" {
   type    = "A"
   ttl     = 300
   managed_zone = google_dns_managed_zone.net_zone.name
-  rrdatas = [var.besu_ambassador_ip_address]
+  rrdatas = ["35.243.197.158"]
 }
 
 resource "google_dns_record_set" "besu_validators_record" {
