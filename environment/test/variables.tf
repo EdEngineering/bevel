@@ -1,11 +1,11 @@
 variable "project" {
   type        = string
   description = "Google Cloud Platform Project ID"
-  default     = "bevel-testing"
+  default     = "besu-member-org"
 }
 
 variable "name" {
-  default = "bevel-test"
+  default = "bevel-test-org"
 }
 
 variable "region" {

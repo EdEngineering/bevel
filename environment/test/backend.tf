@@ -1,6 +1,6 @@
 terraform {
   backend "gcs" {
-    bucket = "bevel-testing-bucket"
+    bucket = "bevel-org-testing-bucket"
     prefix = "terraform/state"
   }
 }
