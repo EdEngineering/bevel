@@ -16,7 +16,7 @@ variable "region" {
 
 variable "zone" {
   type    = string
-  default = "us-central1-c"
+  default = "us-east1-c"
 }
 
 variable "subnet_name" {
@@ -36,7 +36,7 @@ variable "ip_range_services_name" {
 
 variable "cluster_node_zones" {
   type    = list(string)
-  default = ["us-central1-c"]
+  default = ["us-east1-c"]
 }
 
 variable "node_count" {
