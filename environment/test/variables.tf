@@ -51,13 +51,13 @@ variable "dns_name" {
 
 variable "org_records" {
   type = set(string)
-  default = ["supplychain","carrier", "store", "warehouse","manufacturer"]
-
+  # default = ["supplychain","carrier", "store", "warehouse","manufacturer"]
+  default = [ "carrier" ]
 }
 
 variable "besu_ambassador_ip_address" {
   type = string
-  default = "35.223.248.9"
+  default = "104.196.144.35"
 }
 
 variable "kms_keyring" {
