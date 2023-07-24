@@ -1,0 +1,90 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: supplychainvalidator2validator-node
+  namespace: supplychain-bes
+  annotations:
+    flux.weave.works/automated: "false"
+spec:
+  releaseName: supplychainvalidator2validator-node
+  interval: 1m
+  chart:
+   spec:
+    chart: platforms/hyperledger-besu/charts/node_validator
+    sourceRef:
+      kind: GitRepository
+      name: flux-dev
+      namespace: flux-dev
+  values:
+    replicaCount: 1
+
+    healthcheck:
+      readinessthreshold: 100
+      readinesscheckinterval: 5
+
+    staticnodes:
+      - "enode://5e2c727fc77245352db25b3ee82289b873a4c7396a58786748d3d014c7b8568e1c40290d70277fddd16c1db9f27f4d03ae7ec0528dd23946d46cad1452edb27c@validator0.test.besu.edengineering.me:15010"
+      - "enode://9221a4a9ca5dbb4fb9ed70b1453f5eb1b94426e6eedea75e3cb67ed54e36bb3cd6d8bc9d0ed71d93481dffe78673c588c7648398572d30c9b3d40f7ac4228f36@validator1.test.besu.edengineering.me:15012"
+      - "enode://d27522c1440c7e81dd42ebcf31582bd563d5b911685e7e889c2f02cf46093f85e0738b2d04d1a1e89b57899e05df9c4e07c7fd305335c634a21b6ea5f02b1cd8@validator2.test.besu.edengineering.me:15014"
+      - "enode://860b688169348d937f3bceddbb1b800fa45488a5cc728254752c477992799adc8508d0c88ec4349dc7f3b7f8b6472f6217c29438af56a19e40e9135e773103c9@validator3.test.besu.edengineering.me:15016"
+      - "enode://2bc407de5b92e76a9aa934c4a9bf404e06f3c23cfe65be4b7267324907b383e3b85f4390e4572b1a338995da0a74cbdd95db918aa474a1274aa1dd977c7c26b0@carrier.test.besu.edengineering.me:15020"
+      - "enode://2942d25411752de89cc749e5ff2f95f38e1b7e0ca8ef54e49ba5cae024bdfe120655083108fed58c1ee5e22d3337724bb9d3511fe53a8fa2fc403297ab0e27c0@manufacturer.test.besu.edengineering.me:15030"
+      - "enode://4d3aac55eca952f709f694e2695aa644eae31ed8cabf60262b8e029b4488350bbad9fe215f844848a33bd383ff4d285ebab7064bd3350a5052f8c2c4fd7d5c19@store.test.besu.edengineering.me:15040"
+      - "enode://900531f6953c9a86c44b6435e7315071444d7093442c57933cbb90c1c737daa132fdbfef91d695bdaf895a43e3f2206229543a492c411dc4fe5467e7085907c6@warehouse.test.besu.edengineering.me:15050"
+
+    metadata:
+      namespace: supplychain-bes
+      labels:
+
+    ambassador:
+      external_url_suffix: test.besu.edengineering.me
+
+    liveliness_check:
+      enabled: false
+    proxy:
+      provider: ambassador
+      external_url: supplychain.test.besu.edengineering.me
+      p2p: 15014
+      rpc: 15015
+
+    images:
+      node: hyperledger/besu:22.10.2
+      alpineutils: ghcr.io/hyperledger/bevel-alpine:latest
+      pullPolicy: IfNotPresent
+
+    node:
+      name: validator2
+      tls: True
+      consensus: ibft
+      mountPath: /opt/besu/data
+      servicetype: ClusterIP
+      imagePullSecret: regcred
+      ports:
+        p2p: 30303
+        rpc: 8545
+        ws: 8546
+
+      permissioning:
+        enabled: False
+      
+    storage:
+      storageclassname: gcpstorageclass
+      storagesize: 1Gi
+
+    vault:
+      address: http://34.139.229.191:8200
+      secretengine: secretsv2
+      secretprefix: data/supplychain-bes/crypto/validator2
+      serviceaccountname: vault-auth
+      keyname: data
+      tlsdir: tls
+      role: vault-role
+      authpath: besusupplychain
+      type: hashicorp
+
+    genesis: ewogICJjb25maWciOiB7CiAgICAiY2hhaW5JZCI6IDIwMTgsCiAgICAiY29uc3RhbnRpbm9wbGVmaXhibG9jayI6IDAsCiAgICAiY29udHJhY3RTaXplTGltaXQiOiAyMTQ3NDgzNjQ3LAogICAgImliZnQyIjogewogICAgICAiYmxvY2twZXJpb2RzZWNvbmRzIjogMiwKICAgICAgImVwb2NobGVuZ3RoIjogMzAwMDAsCiAgICAgICJyZXF1ZXN0dGltZW91dHNlY29uZHMiOiAxMAogICAgfQogIH0sCiAgIm5vbmNlIjogIjB4MCIsCiAgInRpbWVzdGFtcCI6ICIweDU4ZWU0MGJhIiwKICAiZ2FzTGltaXQiOiAiMHgxZmZmZmZmZmZmZmZmZiIsCiAgImRpZmZpY3VsdHkiOiAiMHgxIiwKICAiYWxsb2MiOiB7CiAgICAiQ2YyNTdmNDc5N0NiODE5YjJDMWNBNEYwRTMyMjFhZjM5NzM0MjFCQiI6IHsKICAgICAgImJhbGFuY2UiOiAiOTAwMDAwMDAwMDAwMDAwMDAwMDAwMDAiCiAgICB9LAogICAgIjE2Q2Q5NTdCNzU3MDI4ZTEzMUE2MUIxYjNFMWI1RTJFNUFEM2M4MjgiOiB7CiAgICAgICJiYWxhbmNlIjogIjkwMDAwMDAwMDAwMDAwMDAwMDAwMDAwIgogICAgfSwKICAgICIyMzEwODNCRjI5RmMzNmFDRTY5ODg3MjAxNmRDNkM2YUUwRkYyMkU0IjogewogICAgICAiYmFsYW5jZSI6ICI5MDAwMDAwMDAwMDAwMDAwMDAwMDAwMCIKICAgIH0KICB9LAogICJleHRyYURhdGEiOiAiMHhmODdlYTAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwZjg1NDk0ZGQ0MGEzMmI1MmRiNTdiMDc4MzcwYTAyZmI5NWIzYmY3YzlkOTMwMTk0YjdiZmUxNDZhZDY0NjBhYTc3ZTlhZmQyNTQxYzMwNjJlNjFlMDBlMjk0ZmI1NDA4ZDM4M2Y3ZjA1YWVjODZiZDg2NmQxOGRiZjZjZmJhZmY5Yjk0OTc2NDE4MzhlMzljMjA5NjdmNTc5ZjBjNDNmZjU1MzMxMmExM2E3NTgwODQwMDAwMDAwMGMwIgp9
+
+
+    metrics:
+      enabled: False
+      port: 9545    
