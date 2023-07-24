@@ -15,20 +15,13 @@ resource "google_dns_record_set" "test_besu_record" {
   rrdatas = [var.besu_ambassador_ip_address]
 }
 
-resource "google_dns_record_set" "besu_cluster_org_record" {
-  name = "test1.besu.${var.dns_name}"
-  type    = "A"
-  ttl     = 300
-  managed_zone = google_dns_managed_zone.net_zone.name
-  rrdatas = ["35.243.197.158"]
-}
-
 resource "google_dns_record_set" "besu_org_record" {
-  name = "carrier.test1.besu.${var.dns_name}"
+  for_each = var.org_records
+  name = "${each.value}.test.besu.${var.dns_name}"
   type    = "A"
   ttl     = 300
   managed_zone = google_dns_managed_zone.net_zone.name
-  rrdatas = ["35.243.197.158"]
+  rrdatas = [var.besu_ambassador_ip_address]
 }
 
 resource "google_dns_record_set" "besu_validators_record" {
@@ -40,13 +33,13 @@ resource "google_dns_record_set" "besu_validators_record" {
   rrdatas = [var.besu_ambassador_ip_address]
 }
 
-resource "google_dns_record_set" "besu_explorer_record" {
-  name    = "explorer.test.besu.${var.dns_name}"
-  type    = "A"
-  ttl     = 300
-  managed_zone = google_dns_managed_zone.net_zone.name
-  rrdatas = ["34.94.216.123"]
-}
+# resource "google_dns_record_set" "besu_explorer_record" {
+#   name    = "explorer.test.besu.${var.dns_name}"
+#   type    = "A"
+#   ttl     = 300
+#   managed_zone = google_dns_managed_zone.net_zone.name
+#   rrdatas = ["34.94.216.123"]
+# }
 
 
 # resource "google_dns_record_set" "ca_ord_record" {
