@@ -19,7 +19,7 @@ resource "helm_release" "consul" {
   namespace  = kubernetes_namespace.consul.metadata[0].name
 
   values = [
-    templatefile("/home/eduser/Repos/Ansible-Bevel-Test/environments/test/tf-helm/consul/consul.yaml", { replicas =  2 }),
+    templatefile("/home/eduser/Repos/Ansible-Bevel-Test/environments/test/tf-helm/consul/consul.yaml", { replicas =  1 }),
   ] 
 }   
 
@@ -47,6 +47,10 @@ data "kubernetes_service" "vault_svc" {
     namespace = kubernetes_namespace.vault.metadata[0].name
    }
 }
+
+
+
+
 
 # #Enough for deploying a vault instance in GCE --------------------- GCE Approach
 # module "vault" {
